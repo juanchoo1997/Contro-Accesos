@@ -48,6 +48,10 @@ public class AccesosService {
         return true;
     }
 
+    public List<AccesosModel> findAccess(){
+        return accesosRepository.findAccess();
+    }
+
 }
 
 

@@ -81,6 +81,13 @@ public class AcesosController {
         return accesosService.findAllAccesos();
     }
 
+    @GetMapping(path = "/findAccess")
+    @ApiOperation(value = "Find accesos", response = AccesosModel.class)
+    public List<AccesosModel> findAccess(){
+        return accesosService.findAccess();
+    }
+
+
     @DeleteMapping(path = "/delete")
     @ApiOperation(value = "Delete accesos por ID", response = AccesosModel.class)
     public void deleteAccesos(@RequestParam(name = "id") long id){
