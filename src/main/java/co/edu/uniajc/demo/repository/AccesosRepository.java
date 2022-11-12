@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface AccesosRepository extends JpaRepository<AccesosModel, Long> {
@@ -40,4 +41,36 @@ public interface AccesosRepository extends JpaRepository<AccesosModel, Long> {
         "and fecha_registro = (SELECT MAX(fecha_registro) FROM accesos);"
     )
     Integer generateOutput (@Param(value = "identificacion")String identificacion,@Param(value = "tipo_id")int tipo_id);
+
+    @Transactional
+    @Query(nativeQuery = true, value =
+            "select\n" +
+                    "\ta.idaccesos,\n" +
+                    "\tcase\n" +
+                    "\t\tp.tipo_identificacion_idtipo_identificacion  \n" +
+                    "\t\twhen 1 then 'CC'\n" +
+                    "\t\twhen 2 then 'TI'\n" +
+                    "\t\telse 'ERROR'\n" +
+                    "\tend as tipo_identificacion,\n" +
+                    "\tp.identificacion as personal_idpersonal,\n" +
+                    "\tu.usuario as usuarios_idusuarios,\n" +
+                    "\tTO_CHAR(a.fecha_ingreso, 'dd-mm-yyyy hh:mm:ss') as fecha_ingreso,\n" +
+                    "\tTO_CHAR(a.fecha_salida, 'dd-mm-yyyy hh:mm:ss') as fecha_salida,\n" +
+                    "\tTO_CHAR(a.fecha_registro, 'dd-mm-yyyy hh:mm:ss') as fecha_registro,\n" +
+                    "\tcase\n" +
+                    "\t\ta.estado\n" +
+                    "\t\twhen true then 'INGRESO'\n" +
+                    "\t\twhen false then 'SALIO'\n" +
+                    "\t\telse 'ERROR'\n" +
+                    "\tend as estado\n" +
+                    "from\n" +
+                    "\taccesos a,\n" +
+                    "\tpersonal p,\n" +
+                    "\tusuarios u\n" +
+                    "where\n" +
+                    "\ta.personal_idpersonal = p.idpersonal\n" +
+                    "\tand \n" +
+                    "\ta.usuarios_idusuarios = u.idusuarios;"
+    )
+    List<AccesosModel> findAccess ();
 }
