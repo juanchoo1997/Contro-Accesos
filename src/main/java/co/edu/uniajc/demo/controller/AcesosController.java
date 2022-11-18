@@ -41,10 +41,15 @@ public class AcesosController {
     })
     public boolean generateInput(@RequestParam(name = "identificacion") String identificacion,@RequestParam(name = "tipo_id") int tipo_id,@RequestParam(name = "usuario") String usuario) {
         try {
-            if (accesosService.generateInput(identificacion, tipo_id, usuario)) {
+            if (accesosService.generateInput(identificacion, tipo_id, usuario) == "true") {
                 return true;
             }
-            return false;
+            else if (accesosService.generateInput(identificacion, tipo_id, usuario) != "true"){
+                    return false;
+            }
+            else {
+                return false;
+            }
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }
@@ -68,6 +73,7 @@ public class AcesosController {
         }
         return false;
     }
+
 
     @PutMapping(path = "/update")
     @ApiOperation(value = "update accesos", response = AccesosModel.class)
