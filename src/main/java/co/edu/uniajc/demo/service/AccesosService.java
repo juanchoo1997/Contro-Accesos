@@ -34,23 +34,32 @@ public class AccesosService {
         accesosRepository.deleteById(id);
     }
 
-    public boolean generateInput ( String identificacion,int tipo_id, String usuario){
-        if (accesosRepository.generateInput(identificacion,tipo_id,usuario) == null) {
-            return false;
+    public String generateInput ( String identificacion,int tipo_id, String usuario){
+        if (accesosRepository.findStateAccess(identificacion, tipo_id) == "true"){
+            throw new RuntimeException(" El personal ya ingreso");
+        } else {
+            accesosRepository.generateInput(identificacion, tipo_id,usuario);
+            return "true";
         }
-        return true;
     }
 
-    public boolean generateOutput ( String identificacion,int tipo_id){
-        if (accesosRepository.generateOutput(identificacion,tipo_id) == null) {
-            return false;
+    public boolean generateOutput ( String identificacion,int tipo_id) {
+        if (accesosRepository.findStateAccess(identificacion, tipo_id) == "true"){
+            accesosRepository.generateOutput(identificacion, tipo_id);
+            return true;
+        } else {
+            throw new RuntimeException(" El personal ya salio");
         }
-        return true;
     }
+
+
+
 
     public List<AccesosModel> findAccess(){
         return accesosRepository.findAccess();
     }
+
+
 
 }
 

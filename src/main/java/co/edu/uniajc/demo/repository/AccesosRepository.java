@@ -36,7 +36,7 @@ public interface AccesosRepository extends JpaRepository<AccesosModel, Long> {
         "estado = false,\n" +
         "fecha_registro = current_timestamp \n" +
         "where\n" +
-        "personal_idpersonal = (select idpersonal  from personal p where identificacion = :identificacion and tipo_identificacion_idtipo_identificacion = :tipo_id)\n" +
+            "personal_idpersonal = (select idpersonal  from personal p where identificacion = :identificacion and tipo_identificacion_idtipo_identificacion = :tipo_id)\n" +
         "and estado = true\n" +
         "and fecha_registro = (SELECT MAX(fecha_registro) FROM accesos);"
     )
@@ -58,7 +58,7 @@ public interface AccesosRepository extends JpaRepository<AccesosModel, Long> {
                     "\tTO_CHAR(a.fecha_salida, 'dd-mm-yyyy hh:mm:ss') as fecha_salida,\n" +
                     "\tTO_CHAR(a.fecha_registro, 'dd-mm-yyyy hh:mm:ss') as fecha_registro,\n" +
                     "\tcase\n" +
-                    "\t\ta.estado\n" +
+                        "\t\ta.estado\n" +
                     "\t\twhen true then 'INGRESO'\n" +
                     "\t\twhen false then 'SALIO'\n" +
                     "\t\telse 'ERROR'\n" +
@@ -73,4 +73,16 @@ public interface AccesosRepository extends JpaRepository<AccesosModel, Long> {
                     "\ta.usuarios_idusuarios = u.idusuarios;"
     )
     List<AccesosModel> findAccess ();
+
+    @Transactional
+    @Query(nativeQuery = true, value =
+            "select estado \n" +
+            "from accesos a \n" +
+            "where \n" +
+            "personal_idpersonal = (select idpersonal  from personal p where identificacion = :identificacion and tipo_identificacion_idtipo_identificacion = :tipo_id)\n" +
+            "and fecha_registro = (SELECT MAX(fecha_registro) FROM accesos); "
+    )
+    String findStateAccess (@Param(value = "identificacion")String identificacion,@Param(value = "tipo_id")int tipo_id);
+
+
 }
